@@ -8,12 +8,21 @@ from pydantic import BaseModel, Field
 class RecommendationRequest(BaseModel):
     origin: str
     destination: str
+    desired_stop_window: StopWindow | None
     max_detour_minutes: int = Field(gt=0, le=60)
     cuisines: list[str] = Field(default_factory=[])
     dietary_restrictions: list[DietaryRestriction] = Field(default_factory=[])
     min_rating: float | None = Field(default=None, ge=0, le=5)
     rating_weight: float = Field(default=0.5, ge=0, le=1)
     preference_weight: float = Field(default=0.5, ge=0, le=1)
+
+# ---------------------------------------------------------
+# Dietary Info
+# ---------------------------------------------------------
+class StopWindow(BaseModel):
+    earliest_minutes: int
+    latest_minutes: int
+
 
 # ---------------------------------------------------------
 # Dietary Info

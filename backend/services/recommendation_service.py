@@ -3,7 +3,7 @@
 from backend.schemas import RecommendationRequest, RestaurantCandidate, Restaurant
 from backend.schemas import DietaryRestriction, DietAvailability
 from backend.services.restaurant_service import get_all_restaurants
-from backend.services.routing_service import get_detour_minutes
+from backend.services.routing_service import get_detour_minutes, get_time_to_restaurant
 
 # ---------------------------------------------------------
 # Ranking
@@ -22,13 +22,19 @@ def get_top_five_restaurants(request: RecommendationRequest) -> list[RestaurantC
 
 def score_restaurant(restaurant: Restaurant, request: RecommendationRequest) -> RestaurantCandidate | None:
     """Scores restaurant, returns None if restaurant does not meet minimum requirements"""
+    # Minimum rating filter
+    if request.min_rating is not None:
+        if restaurant.rating is None or restaurant.rating < request.min_rating:
+            return None
+
     # Hard dietary filter
     if not satisfies_dietary_requirements(restaurant, request.dietary_restrictions):
         return None
 
-    # Minimum rating filter
-    if request.min_rating is not None:
-        if restaurant.rating is None or restaurant.rating < request.min_rating:
+    # Hard time filter
+    time_to_restaurant = get_time_to_restaurant(restaurant, request.origin)
+    if request.desired_stop_window:
+        if not request.desired_stop_window.earliest_minutes <= time_to_restaurant <= request.desired_stop_window.latest_minutes:
             return None
 
     # Detour filter
