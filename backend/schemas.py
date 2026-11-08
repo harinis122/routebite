@@ -17,7 +17,7 @@ class RecommendationRequest(BaseModel):
     preference_weight: float = Field(default=0.5, ge=0, le=1)
 
 # ---------------------------------------------------------
-# Dietary Info
+# Other Preferences
 # ---------------------------------------------------------
 class StopWindow(BaseModel):
     earliest_minutes: int
@@ -88,3 +88,13 @@ class RestaurantCandidate(BaseModel):
     convenience_match: float
     rating_match: float
     score: float
+
+
+# ---------------------------------------------------------
+# Routing
+# ---------------------------------------------------------
+
+class RouteInfo(BaseModel):
+    duration_minutes: float
+    distance_miles: float
+    polyline: str
