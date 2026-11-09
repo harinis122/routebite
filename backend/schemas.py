@@ -60,7 +60,7 @@ class DietaryInfo(BaseModel):
 # Restaurant
 # ---------------------------------------------------------
 # coming later once integration with osm is complete!
-'''
+
 class Restaurant(BaseModel):
     # Provider IDs
     google_place_id: str | None = None
@@ -75,17 +75,14 @@ class Restaurant(BaseModel):
     # Google Places
     rating: float | None = None
     rating_count: int = 0
-    price_level: int | None = None
+    price_level: str | None = None
 
     cuisines: list[str] = Field(default_factory=list)
 
-    # Google has servesVegetarianFood, we keep this separately before merging it with OSM
-    google_serves_vegetarian: bool | None = None
+    # OSM dietary enrichment
+    dietary_info: DietaryInfo = Field(default_factory=DietaryInfo)
 
-    # Primarily OSM dietary enrichment
-    dietary: DietaryInfo = Field(default_factory=DietaryInfo)
 '''
-
 class Restaurant(BaseModel):
     place_id: str
     name: str
@@ -95,6 +92,7 @@ class Restaurant(BaseModel):
     rating: float | None = None
     user_rating_count: int | None = None
     cuisine_tags: list[str] = Field(default_factory=list)
+'''
 
 class RestaurantCandidate(BaseModel):
     restaurant: Restaurant
@@ -113,3 +111,18 @@ class RouteInfo(BaseModel):
     duration_minutes: float
     distance_miles: float
     polyline: str
+
+
+'''
+# ---------------------------------------------------------
+# Price Level Normalization
+# ---------------------------------------------------------
+PRICE_LEVEL_MAP = {
+    "PRICE_LEVEL_FREE": 0,
+    "PRICE_LEVEL_INEXPENSIVE": 1,
+    "PRICE_LEVEL_MODERATE": 2,
+    "PRICE_LEVEL_EXPENSIVE": 3,
+    "PRICE_LEVEL_VERY_EXPENSIVE": 4,
+}
+price_level = PRICE_LEVEL_MAP.get(place.get("priceLevel"))
+'''

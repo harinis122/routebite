@@ -7,11 +7,11 @@ from backend.config import GOOGLE_MAPS_API_KEY
 PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby"
 
 
-async def search_restaurants_near(
+async def get_nearby_restaurants(
     latitude: float,
     longitude: float,
     radius: float = 5000,
-):
+) -> list[dict]:
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
