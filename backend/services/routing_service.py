@@ -1,17 +1,22 @@
-from backend.schemas import RouteInfo
+from backend.schemas import LocationCoordinates, RouteInfo
 from backend.clients.google_routes import get_route
 
 async def get_route_info(
-    origin: str,
-    destination: str,
+    origin: LocationCoordinates,
+    destination: LocationCoordinates,
 ) -> RouteInfo:
 
-    data = await get_route(origin, destination)
+    data = await get_route(origin.latitude, origin.longitude, destination.latitude, destination.longitude)
 
-    route = data["routes"][0]
+    routes = data.get("routes", [])
+
+    if not routes:
+        raise ValueError("No route found between origin and destination")
+
+    route = routes[0]
 
     duration_seconds = float(
-        route["duration"].replace("s", "")
+        route["duration"].removesuffix("s")
     )
 
     return RouteInfo(

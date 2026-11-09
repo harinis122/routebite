@@ -1,14 +1,12 @@
-import os
 import httpx
+from backend.config import GOOGLE_MAPS_API_KEY
 
 ROUTES_URL = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
-async def get_route(origin: str, destination: str) -> dict:
-    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
-
+async def get_route(origin_lat: float, origin_long: float, destination_lat: float, destination_long: float) -> dict:
     headers = {
         "Content-Type": "application/json",
-        "X-Goog-Api-Key": api_key,
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
         "X-Goog-FieldMask": (
             "routes.duration,"
             "routes.distanceMeters,"
@@ -18,15 +16,25 @@ async def get_route(origin: str, destination: str) -> dict:
 
     body = {
         "origin": {
-            "address": origin
+            "location": {
+                "latLng": {
+                    "latitude": origin_lat,
+                    "longitude": origin_long,
+                }
+            }
         },
         "destination": {
-            "address": destination
+            "location": {
+                "latLng": {
+                    "latitude": destination_lat,
+                    "longitude": destination_long,
+                }
+            }
         },
         "travelMode": "DRIVE",
     }
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=10.0) as client:
         response = await client.post(
             ROUTES_URL,
             headers=headers,
@@ -36,3 +44,4 @@ async def get_route(origin: str, destination: str) -> dict:
         response.raise_for_status()
 
         return response.json()
+
