@@ -10,7 +10,7 @@ PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby"
 async def search_restaurants_near(
     latitude: float,
     longitude: float,
-    radius: float = 1500,
+    radius: float = 5000,
 ):
     headers = {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ async def search_restaurants_near(
 
     body = {
         "includedTypes": ["restaurant"],
-        "maxResultCount": 5,
+        "maxResultCount": 10,
         "locationRestriction": {
             "circle": {
                 "center": {

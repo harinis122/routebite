@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------
 
 class RecommendationRequest(BaseModel):
-    origin: str
-    destination: str
+    origin: LocationCoordinates
+    destination: LocationCoordinates
     desired_stop_window: StopWindow | None
     max_detour_minutes: int = Field(gt=0, le=60)
     cuisines: list[str] = Field(default_factory=[])
@@ -15,6 +15,10 @@ class RecommendationRequest(BaseModel):
     min_rating: float | None = Field(default=None, ge=0, le=5)
     rating_weight: float = Field(default=0.5, ge=0, le=1)
     preference_weight: float = Field(default=0.5, ge=0, le=1)
+
+class LocationCoordinates(BaseModel):
+    latitude: float = Field(ge=-90, le=90)
+    longitude: float = Field(ge=-180, le=180)
 
 # ---------------------------------------------------------
 # Other Preferences
@@ -55,7 +59,8 @@ class DietaryInfo(BaseModel):
 # ---------------------------------------------------------
 # Restaurant
 # ---------------------------------------------------------
-
+# coming later once integration with osm is complete!
+'''
 class Restaurant(BaseModel):
     # Provider IDs
     google_place_id: str | None = None
@@ -79,7 +84,17 @@ class Restaurant(BaseModel):
 
     # Primarily OSM dietary enrichment
     dietary: DietaryInfo = Field(default_factory=DietaryInfo)
+'''
 
+class Restaurant(BaseModel):
+    place_id: str
+    name: str
+    latitude: float
+    longitude: float
+    formatted_address: str
+    rating: float | None = None
+    user_rating_count: int | None = None
+    cuisine_tags: list[str] = Field(default_factory=list)
 
 class RestaurantCandidate(BaseModel):
     restaurant: Restaurant

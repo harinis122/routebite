@@ -1,19 +1,27 @@
 # get candidate restaurants, combine Google + OSM data, normalize/enrich restaurants
+from backend.clients.google_places import search_restaurants_near
+
 from backend.schemas import Restaurant, RecommendationRequest
 from backend.schemas import DietAvailability, DietaryInfo
 
-def get_all_restaurants(request: RecommendationRequest) -> list[Restaurant]:
+async def get_all_restaurants(request: RecommendationRequest) -> list[Restaurant]:
+    places = await search_restaurants_near(request.origin.latitude, request.origin.longitude)
+    restaurants = []
+    for place in places:
+        restaurant = Restaurant(
+            place_id=place["id"],
+            name=place["displayName"]["text"],
+            latitude=place["location"]["latitude"],
+            longitude=place["location"]["longitude"],
+            formatted_address=place.get("formattedAddress"),
+            rating=place.get("rating"),
+            user_rating_count=place.get("userRatingCount"),
+            cuisine_tags=place.get("types", []),
+        )
+        restaurants.append(restaurant)
 
-    # Eventually:
-    #
-    # 1. Google Places -> candidate restaurants
-    # 2. OSM -> dietary information
-    # 3. Merge both into Restaurant objects
-    #
-    # For now return fake data.
-
-    restaurants = get_fake_google_restaurants()
-    return [enrich_with_fake_osm_data(restaurant) for restaurant in restaurants]
+    #restaurants = get_fake_google_restaurants()
+    return restaurants
 
 
 def get_fake_google_restaurants() -> list[Restaurant]:
