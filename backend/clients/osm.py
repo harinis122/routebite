@@ -2,13 +2,13 @@
 import httpx
 
 
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URL = "https://overpass.private.coffee/api/interpreter"
 
 
 async def get_nearby_osm_restaurants(
     latitude: float,
     longitude: float,
-    radius: float = 5000,
+    radius: float = 30,
 ) -> list[dict]:
 
     query = f"""

@@ -48,13 +48,14 @@ class DietAvailability(str, Enum):
     NO = "no"
     UNKNOWN = "unknown"
 
+'''
 class DietaryInfo(BaseModel):
     vegetarian: DietAvailability = DietAvailability.UNKNOWN
     vegan: DietAvailability = DietAvailability.UNKNOWN
     halal: DietAvailability = DietAvailability.UNKNOWN
     kosher: DietAvailability = DietAvailability.UNKNOWN
     gluten_free: DietAvailability = DietAvailability.UNKNOWN
-
+'''
 
 # ---------------------------------------------------------
 # Restaurant
@@ -80,19 +81,7 @@ class Restaurant(BaseModel):
     cuisines: list[str] = Field(default_factory=list)
 
     # OSM dietary enrichment
-    dietary_info: DietaryInfo = Field(default_factory=DietaryInfo)
-
-'''
-class Restaurant(BaseModel):
-    place_id: str
-    name: str
-    latitude: float
-    longitude: float
-    formatted_address: str
-    rating: float | None = None
-    user_rating_count: int | None = None
-    cuisine_tags: list[str] = Field(default_factory=list)
-'''
+    # dietary_info: DietaryInfo = Field(default_factory=DietaryInfo)
 
 class RestaurantCandidate(BaseModel):
     restaurant: Restaurant
