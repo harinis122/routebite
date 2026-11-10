@@ -24,8 +24,8 @@ class LocationCoordinates(BaseModel):
 # Other Preferences
 # ---------------------------------------------------------
 class StopWindow(BaseModel):
-    earliest_minutes: int
-    latest_minutes: int
+    target_minutes_from_origin: int
+    flexibility_minutes: int
 
 
 # ---------------------------------------------------------
